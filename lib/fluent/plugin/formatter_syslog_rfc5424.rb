@@ -42,7 +42,7 @@ module Fluent
         severity = record.dig(*@severity_field_array) || DEFAULT_SEVERITY
 
         msg = RFC5424::Formatter.format(
-          prioiry: priority_from_facility_and_severity(facility, severity),
+          priority: priority_from_facility_and_severity(facility, severity),
           log: record.dig(*@log_field_array) || "-",
           timestamp: time,
           hostname: record.dig(*@hostname_field_array) || "-",
@@ -60,7 +60,7 @@ module Fluent
         msg.length.to_s + ' ' + msg
       end
 
-      def priority_from_facility_and_sieverity(facility=DEFAULT_FACILITY, severity=DEFAULT_SEVERITY)
+      def priority_from_facility_and_severity(facility=DEFAULT_FACILITY, severity=DEFAULT_SEVERITY)
         begin
           severity_int = Syslog.const_get("LOG_#{severity.upcase}")
         rescue NameError
