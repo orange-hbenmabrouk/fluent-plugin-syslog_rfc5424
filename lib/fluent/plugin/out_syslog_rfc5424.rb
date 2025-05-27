@@ -7,12 +7,21 @@ module Fluent
 
       helpers :socket, :formatter
       DEFAULT_FORMATTER = "syslog_rfc5424"
+      
+      DEFAULT_CONNECT_TIMEOUT = 10
+      DEFAULT_SEND_TIMEOUT = 15
+      DEFAULT_RECV_TIMEOUT = 15
+      DEFAULT_LINGER_TIMEOUT = 0
 
       config_param :host, :string
       config_param :port, :integer
       config_param :transport, :string, default: "tls"
       config_param :insecure, :bool, default: false
       config_param :trusted_ca_path, :string, default: nil
+      config_param :connect_timeout, :integer, default: DEFAULT_CONNECT_TIMEOUT
+      config_param :send_timeout, :integer, default: DEFAULT_SEND_TIMEOUT
+      config_param :recv_timeout, :integer, default: DEFAULT_RECV_TIMEOUT
+      config_param :linger_timeout, :integer, default: DEFAULT_LINGER_TIMEOUT
       config_section :format do
         config_set_default :@type, DEFAULT_FORMATTER
       end
@@ -61,8 +70,7 @@ module Fluent
         if @transport == 'udp'
           { connect: true }
         elsif @transport == 'tls'
-          # TODO: make timeouts configurable
-          { insecure: @insecure, verify_fqdn: !@insecure, cert_paths: @trusted_ca_path } #, connect_timeout: 1, send_timeout: 1, recv_timeout: 1, linger_timeout: 1 }
+          { insecure: @insecure, verify_fqdn: !@insecure, cert_paths: @trusted_ca_path , connect_timeout: @connect_timeout, send_timeout: @send_timeout, recv_timeout: @recv_timeout, linger_timeout: @linger_timeout }
         else
           {}
         end

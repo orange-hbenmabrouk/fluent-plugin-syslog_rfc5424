@@ -38,27 +38,31 @@ Or install it yourself as:
 
 ### Configuration
 
-| name              | type       | description                               |
-| --------------    | -------    | ---------------------------------         |
-| host              | string     | syslog target host                        |
-| port              | integer    | syslog target port                        |
-| transport         | string     | transport protocol (tls [default], udp, or tcp) |
-| insecure          | boolean    | skip ssl validation |
-| trusted_ca_path   | string     | file path to ca to trust |
+| name            | type    | description                                                                                                                           |
+| --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| host            | string  | syslog target host                                                                                                                    |
+| port            | integer | syslog target port                                                                                                                    |
+| transport       | string  | transport protocol (tls [default], udp, or tcp)                                                                                       |
+| insecure        | boolean | skip ssl validation                                                                                                                   |
+| trusted_ca_path | string  | file path to ca to trust                                                                                                              |
+| connect_timeout | integer | duration to wait for connection establishment (default 10)                                                                            |
+| send_timeout    | integer | duration to wait for a response from the syslog server (default 15)                                                                   |
+| recv_timeout    | integer | rfc5424 doesn't require replies, but if the clients expects a response (e.g., ACKs), keep it reasonable (default 15)                  |
+| linger_timeout  | integer | controls how long to wait after `close()`. Use `0` to disable linger delays or a small value to allow final data flushing (default 0) |
 
 #### Format Section
 
 Defaults to `syslog_rfc5424`
 
-| name                      |type     | description |
-| --------------            | ------- | -------     |
-| rfc6587_message_size      | boolean | prepends message length for syslog transmission (true by default)  |
-| hostname_field            | string  | sets host name in syslog from field in fluentd, delimited by '.' (default hostname) |
-| app_name_field            | string  | sets app name in syslog from field in fluentd, delimited by '.' (default app_name) |
-| proc_id_field             | string  | sets proc id in syslog from field in fluentd, delimited by '.' (default proc_id) |
-| message_id_field          | string  | sets msg id in syslog from field in fluentd, delimited by '.' (default message_id) |
-| structured_data_field     | string  | sets structured data in syslog from field in fluentd, delimited by '.' (default structured_data) |
-| log_field                 | string  | sets log in syslog from field in fluentd, delimited by '.' (default log) |
+| name                  | type    | description                                                                                      |
+| --------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| rfc6587_message_size  | boolean | prepends message length for syslog transmission (true by default)                                |
+| hostname_field        | string  | sets host name in syslog from field in fluentd, delimited by '.' (default hostname)              |
+| app_name_field        | string  | sets app name in syslog from field in fluentd, delimited by '.' (default app_name)               |
+| proc_id_field         | string  | sets proc id in syslog from field in fluentd, delimited by '.' (default proc_id)                 |
+| message_id_field      | string  | sets msg id in syslog from field in fluentd, delimited by '.' (default message_id)               |
+| structured_data_field | string  | sets structured data in syslog from field in fluentd, delimited by '.' (default structured_data) |
+| log_field             | string  | sets log in syslog from field in fluentd, delimited by '.' (default log)                         |
 
 ## Formatter Usage
 
