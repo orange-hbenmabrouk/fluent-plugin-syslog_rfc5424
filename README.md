@@ -38,17 +38,19 @@ Or install it yourself as:
 
 ### Configuration
 
-| name            | type    | description                                                                                                                           |
-| --------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| host            | string  | syslog target host                                                                                                                    |
-| port            | integer | syslog target port                                                                                                                    |
-| transport       | string  | transport protocol (tls [default], udp, or tcp)                                                                                       |
-| insecure        | boolean | skip ssl validation                                                                                                                   |
-| trusted_ca_path | string  | file path to ca to trust                                                                                                              |
-| connect_timeout | integer | duration to wait for connection establishment (default 10)                                                                            |
-| send_timeout    | integer | duration to wait for a response from the syslog server (default 15)                                                                   |
-| recv_timeout    | integer | rfc5424 doesn't require replies, but if the clients expects a response (e.g., ACKs), keep it reasonable (default 15)                  |
-| linger_timeout  | integer | controls how long to wait after `close()`. Use `0` to disable linger delays or a small value to allow final data flushing (default 0) |
+| name              | type    | description                                                                                                                           |
+| ----------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| host              | string  | syslog target host                                                                                                                    |
+| port              | integer | syslog target port                                                                                                                    |
+| transport         | string  | transport protocol (tls [default], udp, or tcp)                                                                                       |
+| insecure          | boolean | skip ssl validation                                                                                                                   |
+| trusted_ca_path   | string  | file path to ca to trust                                                                                                              |
+| connect_timeout   | integer | duration to wait for connection establishment (default 10)                                                                            |
+| send_timeout      | integer | duration to wait for a response from the syslog server (default 15)                                                                   |
+| recv_timeout      | integer | rfc5424 doesn't require replies, but if the clients expects a response (e.g., ACKs), keep it reasonable (default 15)                  |
+| linger_timeout    | integer | controls how long to wait after `close()`. Use `0` to disable linger delays or a small value to allow final data flushing (default 0) |
+| keepalive         | boolean | enable TLS keepalive (default true)                                                                                                   |
+| keepalive_timeout | integer | duration to wait for a keepalive response (default 30)                                                                                |
 
 #### Format Section
 
