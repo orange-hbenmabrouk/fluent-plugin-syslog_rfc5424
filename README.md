@@ -59,6 +59,8 @@ Defaults to `syslog_rfc5424`
 | message_id_field          | string  | sets msg id in syslog from field in fluentd, delimited by '.' (default message_id) |
 | structured_data_field     | string  | sets structured data in syslog from field in fluentd, delimited by '.' (default structured_data) |
 | log_field                 | string  | sets log in syslog from field in fluentd, delimited by '.' (default log) |
+| facility_field            | string  | sets facility in syslog from field in fluentd, delimited by '.' (default user) |
+| severity_filed            | string  | sets severity in syslog from field in fluentd, delimited by '.' (default info) |
 
 ## Formatter Usage
 
