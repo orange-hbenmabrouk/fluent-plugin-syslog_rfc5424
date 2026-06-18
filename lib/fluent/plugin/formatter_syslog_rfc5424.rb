@@ -34,73 +34,46 @@ module Fluent
         @severity_field_array = @severity_field.split(".")
       end
 
-      def normalize_utf8(value)
-        str = value.to_s
-        return "-" if str.empty?
-
-        return str.encode('UTF-8') if str.encoding == Encoding::UTF_8 && str.valid_encoding?
-
-        utf8 = str.dup.force_encoding('UTF-8')
-        return utf8 if utf8.valid_encoding?
-
-        begin
-          str.encode('UTF-8', 'Windows-1252')
-        rescue
-          begin
-            str.encode('UTF-8', 'ISO-8859-1')
-          rescue
-            str.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-          end
-        end
-      end
-
       def format(tag, time, record)
-        log.debug("Record: #{record.map { |k, v| "#{k}=#{v}" }.join('&')}")
-
-        facility = record.dig(*@facility_field_array) || DEFAULT_FACILITY
-        severity = record.dig(*@severity_field_array) || DEFAULT_SEVERITY
-
-        log_value = normalize_utf8(record.dig(*@log_field_array) || "-")
-        hostname = normalize_utf8(record.dig(*@hostname_field_array) || "-")
-        app_name = normalize_utf8(record.dig(*@app_name_field_array) || "-")
-        proc_id = normalize_utf8(record.dig(*@proc_id_field_array) || "-")
-        msg_id = normalize_utf8(record.dig(*@message_id_field_array) || "-")
-        sd = normalize_utf8(record.dig(*@structured_data_field_array) || "-")
+        msg_id = record.dig(*@message_id_field_array) || "unknown message id"
+        log.debug("#{msg_id} - Record: #{record.map { |k, v| "#{k}=#{v}" }.join('&')}")
 
         msg = RFC5424::Formatter.format(
-          priority: priority_from_facility_and_severity(facility, severity),
-          log: log_value,
+          priority: priority_from_facility_and_severity(record),
+          log: record.dig(*@log_field_array) || "-",
           timestamp: time,
-          hostname: hostname,
-          app_name: app_name,
-          proc_id: proc_id,
-          msg_id: msg_id,
-          sd: sd
+          hostname: record.dig(*@hostname_field_array) || "-",
+          app_name: record.dig(*@app_name_field_array) || "-",
+          proc_id: record.dig(*@proc_id_field_array) || "-",
+          msg_id: record.dig(*@message_id_field_array) || "-",
+          sd: record.dig(*@structured_data_field_array) || "-"
         )
 
-        msg = msg.to_s.encode("UTF-8", invalid: :replace, undef: :replace, replace: "�")
-
-        log.debug("RFC 5424 Message: #{msg}")  
+        log.debug("#{msg_id} - RFC 5424 Message: #{msg}")
 
         return msg + "\n" unless @rfc6587_message_size
 
         msg.bytesize.to_s + ' ' + msg
       end
 
-      def priority_from_facility_and_severity(facility=DEFAULT_FACILITY, severity=DEFAULT_SEVERITY)
+      def priority_from_facility_and_severity(record)
+        msg_id = record.dig(*@message_id_field_array) || "unknown message id"
+        facility = record.dig(*@facility_field_array) || DEFAULT_FACILITY
+        severity = record.dig(*@severity_field_array) || DEFAULT_SEVERITY
+
         begin
           severity_int = Syslog.const_get("LOG_#{severity.upcase}")
         rescue NameError
           severity_int = Syslog.const_get("LOG_ALERT")
         end
-        log.debug("Severity: #{severity_int}")
+        log.debug("#{msg_id} - Severity: #{severity} (#{severity_int})")
 
         begin
           facility_int = Syslog.const_get("LOG_#{facility.upcase}")
         rescue NameError
           facility_int = Syslog.const_get("LOG_#{DEFAULT_FACILITY.upcase}")
         end
-        log.debug("Facility: #{facility_int}")
+        log.debug("#{msg_id} - Facility: #{facility} (#{facility_int})")
 
         return (facility_int * 8) + severity_int
       end
